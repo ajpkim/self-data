@@ -11,7 +11,7 @@ export default function Habits() {
       <h1>Hi</h1>
       <HabitsTable
         startDate="2023-01-01"
-        endDate="2023-01-30"
+        endDate="2023-01-05"
         habits={['a', 'b']}
       />
     </>

@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-table'
 import { getDatesFromEndpoints } from '@/utils'
 
+// DEV
 import habitData from './habitData.json'
 
 type HabitRecord = {
@@ -30,10 +31,17 @@ export default function HabitsTable({
   endDate,
   habits,
 }: HabitsTableProps) {
-  const { data, setData } = useState()
+  const [data, setData] = useState([])
+
+  // TODO: Use real hook to get real data
+  useEffect(() => {
+    setData(habitData)
+  }, [])
 
   let dates = getDatesFromEndpoints(startDate, endDate)
   const columnHelper = createColumnHelper<Habit>()
+
+  // Dynamically create columns based on the given data range
   const columns = [
     columnHelper.accessor('habit', {
       header: () => <span>Habit</span>,
@@ -42,11 +50,23 @@ export default function HabitsTable({
       columnHelper.accessor(
         (row) => {
           const record = row.records.find((x) => x.date === date)
-          return record ? record.completed : false
+          return record ? record : { date, completed: false }
         },
         {
           id: date,
           header: () => <span>{date}</span>,
+          cell: (info) => {
+            const record = info.getValue()
+            return (
+              <input
+                type="checkbox"
+                checked={record.completed}
+                onChange={(e) => {
+                  // TODO: Make API call to update entry here
+                }}
+              />
+            )
+          },
         },
       ),
     ),
@@ -90,21 +110,6 @@ export default function HabitsTable({
     </div>
   )
 }
-
-// cell: (info) => (
-//   <input
-//     type="checkbox"
-//     checked={info.getValue() || false}
-//     onChange={() => handleCheckboxChange(info.row.id, info.column.id)}
-//   />
-// )
-// ,
-
-// TODO: Implement this
-// useEffect(() => {
-//   // const habitData = useHabitData(startDate, endDate, habits)
-//   setData(habitData)
-// }, [])
 
 // const handleCheckboxChange = (rowId: string, columnId: string) => {
 //   const newHabits = data.map((habit) => {
