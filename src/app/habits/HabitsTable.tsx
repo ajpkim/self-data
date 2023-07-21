@@ -5,7 +5,8 @@ import {
   flexRender,
   getCoreRowModel,
 } from '@tanstack/react-table'
-import { getDatesFromEndpoints } from '@/utils'
+import classNames from 'classnames'
+import { getDatesFromEndpoints, getAbbreviatedDayOfWeek } from '@/utils'
 
 // DEV
 import habitData from './habitData.json'
@@ -44,7 +45,7 @@ export default function HabitsTable({
   // Dynamically create columns based on the given data range
   const columns = [
     columnHelper.accessor('habit', {
-      header: () => <span>Habit</span>,
+      header: () => <span></span>,
     }),
     ...dates.map((date, i) =>
       columnHelper.accessor(
@@ -54,17 +55,25 @@ export default function HabitsTable({
         },
         {
           id: date,
-          header: () => <span>{date}</span>,
+          header: () => (
+            <span className="font-mono">{getAbbreviatedDayOfWeek(date)}</span>
+          ),
           cell: (info) => {
             const record = info.getValue()
             return (
-              <input
-                type="checkbox"
-                checked={record.completed}
-                onChange={(e) => {
+              <button
+                onClick={(e) => {
                   // TODO: Make API call to update entry here
                 }}
-              />
+                className={classNames(
+                  'h-full w-full cursor-pointer flex items-center justify-center',
+                  {
+                    'bg-rose-500': !record.completed,
+                    'bg-emerald-500': record.completed,
+                  },
+                )}
+                style={{ minHeight: '1rem', minWidth: '1rem' }}
+              ></button>
             )
           },
         },
@@ -80,12 +89,15 @@ export default function HabitsTable({
 
   return (
     <div className="p-2">
-      <table className="table-auto">
+      <table className="table-auto w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((column) => (
-                <th key={column.id}>
+            <tr key={headerGroup.id} className="flex w-full">
+              {headerGroup.headers.map((column, index) => (
+                <th
+                  className={index === 0 ? 'w-12' : 'flex-grow'}
+                  key={column.id}
+                >
                   {flexRender(
                     column.column.columnDef.header,
                     column.getContext(),
@@ -97,9 +109,12 @@ export default function HabitsTable({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+            <tr className="flex w-full space-x-3.5" key={row.id}>
+              {row.getVisibleCells().map((cell, index) => (
+                <td
+                  className={index === 0 ? 'w-12' : 'flex-grow'}
+                  key={cell.id}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -110,15 +125,3 @@ export default function HabitsTable({
     </div>
   )
 }
-
-// const handleCheckboxChange = (rowId: string, columnId: string) => {
-//   const newHabits = data.map((habit) => {
-//     if (habit.habit === rowId) {
-//       habit.data = habit.data.map((h) =>
-//         h.date === columnId ? { ...h, completed: !h.completed } : h,
-//       )
-//     }
-//     return habit
-//   })
-//   setData(newHabits)
-// }

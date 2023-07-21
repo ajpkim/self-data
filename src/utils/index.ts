@@ -12,3 +12,8 @@ export function getDatesFromEndpoints(startDate: string, endDate: string) {
   }
   return dates
 }
+
+export function getAbbreviatedDayOfWeek(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleString('en-US', { weekday: 'short' })
+}
