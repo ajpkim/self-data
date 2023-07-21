@@ -56,8 +56,14 @@ export default function HabitsTable({
         {
           id: date,
           header: () => (
-            <span className="font-mono">{getAbbreviatedDayOfWeek(date)}</span>
+            <div className="relative group inline-block">
+              <span className="font-mono">{getAbbreviatedDayOfWeek(date)}</span>
+              <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition duration-200 px-3 py-2 rounded text-xs">
+                {date}
+              </div>
+            </div>
           ),
+
           cell: (info) => {
             const record = info.getValue()
             return (
@@ -109,7 +115,7 @@ export default function HabitsTable({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr className="flex w-full space-x-3.5" key={row.id}>
+            <tr className="flex w-full" key={row.id}>
               {row.getVisibleCells().map((cell, index) => (
                 <td
                   className={index === 0 ? 'w-12' : 'flex-grow'}

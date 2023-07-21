@@ -9,7 +9,6 @@ import { getX } from '@/api'
 export default function Habits() {
   return (
     <>
-      <h1>Hi</h1>
       <HabitsTable
         startDate="2023-01-01"
         endDate="2023-01-10"
