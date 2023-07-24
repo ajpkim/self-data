@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import {
   createColumnHelper,
@@ -7,24 +9,19 @@ import {
 } from '@tanstack/react-table'
 import classNames from 'classnames'
 import { getDatesFromEndpoints, getAbbreviatedDayOfWeek } from '@/utils'
+import { getHabitRecords } from '@/api'
+import type { Habit, HabitRecord, HabitRecords } from '@/types'
+
+// Does this belong in a client component???
+export const revalidate = 0
 
 // DEV
-import habitData from './habitData.json'
-
-type HabitRecord = {
-  date: string
-  completed: boolean
-}
-
-type Habit = {
-  habit: string
-  records: HabitEntry[]
-}
+// import habitData from './habitData.json'
 
 type HabitsTableProps = {
   startDate: string
   endDate: string
-  habits: string[]
+  habits: Habit[]
 }
 
 export default function HabitsTable({
@@ -34,9 +31,12 @@ export default function HabitsTable({
 }: HabitsTableProps) {
   const [data, setData] = useState([])
 
-  // TODO: Use real hook to get real data
   useEffect(() => {
-    setData(habitData)
+    const initHabitData = async () => {
+      let habitData = await getHabitRecords(startDate, endDate, habits)
+      setData(habitData)
+    }
+    initHabitData()
   }, [])
 
   let dates = getDatesFromEndpoints(startDate, endDate)
@@ -44,7 +44,8 @@ export default function HabitsTable({
 
   // Dynamically create columns based on the given data range
   const columns = [
-    columnHelper.accessor('habit', {
+    columnHelper.accessor((row) => row.habit.name, {
+      id: 1,
       header: () => <span></span>,
     }),
     ...dates.map((date, i) =>
@@ -88,20 +89,20 @@ export default function HabitsTable({
   ]
 
   const table = useReactTable({
-    data: habitData,
+    data: data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
 
   return (
-    <div className="p-2">
+    <div className="pt-10 px-2">
       <table className="table-auto w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="flex w-full">
               {headerGroup.headers.map((column, index) => (
                 <th
-                  className={index === 0 ? 'w-12' : 'flex-grow'}
+                  className={index === 0 ? 'w-24' : 'flex-grow'}
                   key={column.id}
                 >
                   {flexRender(
@@ -115,10 +116,13 @@ export default function HabitsTable({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr className="flex w-full" key={row.id}>
+            <tr
+              className="flex w-full my-1 hover:bg-blue-400 hover:font-bold"
+              key={row.id}
+            >
               {row.getVisibleCells().map((cell, index) => (
                 <td
-                  className={index === 0 ? 'w-12' : 'flex-grow'}
+                  className={index === 0 ? 'w-24' : 'flex-grow px-1'}
                   key={cell.id}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -131,3 +135,6 @@ export default function HabitsTable({
     </div>
   )
 }
+
+//   return <></>
+// }
