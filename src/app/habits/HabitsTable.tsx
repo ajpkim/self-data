@@ -16,27 +16,18 @@ import type { Habit, HabitRecord, HabitRecords } from '@/types'
 export const revalidate = 0
 
 type HabitsTableProps = {
+  habitsRecords: HabitRecords[]
   startDate: string
   endDate: string
-  habits: Habit[]
+  setTriggerRefetch: (trigger: boolean) => void
 }
 
 export default function HabitsTable({
+  habitsRecords,
   startDate,
   endDate,
-  habits,
+  setTriggerRefetch,
 }: HabitsTableProps) {
-  const [data, setData] = useState([])
-  const [triggerRefetch, setTriggerRefetch] = useState(false)
-
-  useEffect(() => {
-    const initHabitData = async () => {
-      let habitData = await getHabitRecords(startDate, endDate, habits)
-      setData(habitData)
-    }
-    initHabitData()
-  }, [triggerRefetch])
-
   let dates = getDatesFromEndpoints(startDate, endDate).reverse()
   const columnHelper = createColumnHelper<Habit>()
 
@@ -89,12 +80,12 @@ export default function HabitsTable({
     ),
   ]
   const table = useReactTable({
-    data: data,
+    data: habitsRecords,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <div className="pt-10 px-2">
+    <div className="pt-10">
       <table className="table-auto w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

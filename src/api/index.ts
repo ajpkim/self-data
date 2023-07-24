@@ -1,10 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Habit, HabitRecord, HabitRecords } from '@/types'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
-
-import type { Habit, HabitRecord, HabitRecords } from '@/types'
 
 /*
  * GET all the rows in some table 'x'
@@ -17,17 +16,16 @@ export async function getX(x: string) {
   return data === null ? [] : data
 }
 
-// export async function getHabitNamesFromIds(habitIds: string[]) {
-//   let { data, error } = await supabase
-//     .from('habits')
-//     .select('name')
-//     .in('id', habitIds)
-//   if (error) {
-//     throw new Error(error.message)
-//   }
-//   return data
-// }
-
+export async function getActiveHabits() {
+  let { data, error } = await supabase
+    .from('habits')
+    .select('*')
+    .eq('active', true)
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
+}
 /*
  * Fetch the habit records for the HabitTable component given date
  * range and array of habits.
@@ -63,6 +61,17 @@ export async function getHabitRecords(
   return Object.values(habitsMap)
 }
 
+export async function createHabit(name: string) {
+  const { data, error } = await supabase
+    .from('habits')
+    .insert([{ name }])
+    .select()
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
+}
+
 export async function createOrDeleteHabitRecord(
   habitId: string,
   date: string,
@@ -74,6 +83,9 @@ export async function createOrDeleteHabitRecord(
       .from('habit_records')
       .insert([{ habit_id: habitId, date: date, completed: true }])
       .select()
+    if (error) {
+      throw new Error(error.message)
+    }
   } else {
     // Delete
     const { error } = await supabase
@@ -82,6 +94,9 @@ export async function createOrDeleteHabitRecord(
       .eq('habit_id', habitId)
       .eq('date', date)
       .eq('completed', true)
+    if (error) {
+      throw new Error(error.message)
+    }
   }
 }
 
