@@ -47,7 +47,6 @@ export async function getHabitRecords(
   if (error) {
     throw new Error(error.message)
   }
-
   let habitsMap = habits.reduce(
     (acc, curr) => ({
       ...acc,
@@ -58,23 +57,43 @@ export async function getHabitRecords(
     }),
     {},
   )
-
   for (const record of records) {
     habitsMap[record.habit_id]['records'].push(record)
   }
-
   return Object.values(habitsMap)
-
-  // .lt('column', 'Less than')
-  // .gte('column', 'Greater than or equal to')
-  // .lte('column', 'Less than or equal to')
-  // .like('column', '%CaseSensitive%')
-  // .ilike('column', '%CaseInsensitive%')
-  // .is('column', null)
-  // .in('column', ['Array', 'Values'])
-  // .neq('column', 'Not equal to')
-
-  // // Arrays
-  // .cs('array_column', ['array', 'contains'])
-  // .cd('array_column', ['contained', 'by'])
 }
+
+export async function createOrDeleteHabitRecord(
+  habitId: string,
+  date: string,
+  completed: boolean,
+) {
+  if (completed) {
+    // Insert
+    const { data, error } = await supabase
+      .from('habit_records')
+      .insert([{ habit_id: habitId, date: date, completed: true }])
+      .select()
+  } else {
+    // Delete
+    const { error } = await supabase
+      .from('habit_records')
+      .delete()
+      .eq('habit_id', habitId)
+      .eq('date', date)
+      .eq('completed', true)
+  }
+}
+
+// .lt('column', 'Less than')
+// .gte('column', 'Greater than or equal to')
+// .lte('column', 'Less than or equal to')
+// .like('column', '%CaseSensitive%')
+// .ilike('column', '%CaseInsensitive%')
+// .is('column', null)
+// .in('column', ['Array', 'Values'])
+// .neq('column', 'Not equal to')
+
+// // Arrays
+// .cs('array_column', ['array', 'contains'])
+// .cd('array_column', ['contained', 'by'])

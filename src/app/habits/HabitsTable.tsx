@@ -9,14 +9,11 @@ import {
 } from '@tanstack/react-table'
 import classNames from 'classnames'
 import { getDatesFromEndpoints, getAbbreviatedDayOfWeek } from '@/utils'
-import { getHabitRecords } from '@/api'
+import { getHabitRecords, createOrDeleteHabitRecord } from '@/api'
 import type { Habit, HabitRecord, HabitRecords } from '@/types'
 
 // Does this belong in a client component???
 export const revalidate = 0
-
-// DEV
-// import habitData from './habitData.json'
 
 type HabitsTableProps = {
   startDate: string
@@ -30,6 +27,7 @@ export default function HabitsTable({
   habits,
 }: HabitsTableProps) {
   const [data, setData] = useState([])
+  const [triggerRefetch, setTriggerRefetch] = useState(false)
 
   useEffect(() => {
     const initHabitData = async () => {
@@ -37,9 +35,9 @@ export default function HabitsTable({
       setData(habitData)
     }
     initHabitData()
-  }, [])
+  }, [triggerRefetch])
 
-  let dates = getDatesFromEndpoints(startDate, endDate)
+  let dates = getDatesFromEndpoints(startDate, endDate).reverse()
   const columnHelper = createColumnHelper<Habit>()
 
   // Dynamically create columns based on the given data range
@@ -52,7 +50,9 @@ export default function HabitsTable({
       columnHelper.accessor(
         (row) => {
           const record = row.records.find((x) => x.date === date)
-          return record ? record : { date, completed: false }
+          return record
+            ? record
+            : { habit_id: row.habit.id, date, completed: false }
         },
         {
           id: date,
@@ -64,13 +64,14 @@ export default function HabitsTable({
               </div>
             </div>
           ),
-
           cell: (info) => {
             const record = info.getValue()
             return (
               <button
-                onClick={(e) => {
-                  // TODO: Make API call to update entry here
+                onClick={async (e) => {
+                  const { habit_id, date, completed } = record
+                  await createOrDeleteHabitRecord(habit_id, date, !completed)
+                  setTriggerRefetch((prev) => !prev)
                 }}
                 className={classNames(
                   'h-full w-full cursor-pointer flex items-center justify-center',
@@ -87,13 +88,11 @@ export default function HabitsTable({
       ),
     ),
   ]
-
   const table = useReactTable({
     data: data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-
   return (
     <div className="pt-10 px-2">
       <table className="table-auto w-full">
@@ -117,7 +116,7 @@ export default function HabitsTable({
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr
-              className="flex w-full my-1 hover:bg-blue-400 hover:font-bold"
+              className="flex w-full my-1 hover:bg-blue-200 hover:font-bold"
               key={row.id}
             >
               {row.getVisibleCells().map((cell, index) => (
@@ -135,6 +134,3 @@ export default function HabitsTable({
     </div>
   )
 }
-
-//   return <></>
-// }
