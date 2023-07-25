@@ -24,12 +24,14 @@ export default function HabitsConfig() {
 
   return (
     <>
-      <div className="text-right pr-5 text-sm italic">
-        <Link href="/habits">Habits</Link>
-      </div>
-      <div className="my-5">
-        <HabitsConfigTable habits={habits} setHabits={setHabits} />
-        <AddHabitBtn setHabits={setHabits} />
+      <div className="mx-2">
+        <div className="text-right pr-5 text-md italic">
+          <Link href="/habits">Habits</Link>
+        </div>
+        <div className="my-5">
+          <HabitsConfigTable habits={habits} setHabits={setHabits} />
+          <AddHabitBtn setHabits={setHabits} />
+        </div>
       </div>
     </>
   )

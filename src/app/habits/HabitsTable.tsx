@@ -107,12 +107,12 @@ export default function HabitsTable({
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr
-              className="flex w-full my-1 hover:bg-blue-200 hover:font-bold"
+              className="flex w-full my-1 hover:bg-zinc-700 hover:font-bold"
               key={row.id}
             >
               {row.getVisibleCells().map((cell, index) => (
                 <td
-                  className={index === 0 ? 'w-24' : 'flex-grow px-1'}
+                  className={index === 0 ? 'w-24' : 'flex-grow px-1.5'}
                   key={cell.id}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

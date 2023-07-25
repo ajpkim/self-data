@@ -28,12 +28,13 @@ export default function HabitsConfigTable({
         const row = info.getValue()
         return (
           <button
-            className={classNames('w-16', {
-              'rounded-lg bg-rose-300 p-1 text-sm shadow-sm hover:bg-rose-400':
-                !row.active,
-              'rounded-lg bg-emerald-300 p-1 text-sm shadow-sm hover:bg-emerald-400':
-                row.active,
-            })}
+            className={classNames(
+              'w-16 text-black rounded-lg p-1 text-sm shadow-sm',
+              {
+                'bg-rose-300 hover:bg-rose-500': !row.active,
+                'bg-emerald-300 hover:bg-emerald-500': row.active,
+              },
+            )}
             onClick={async (e) => {
               const { id: habitId, active } = row
               const updatedHabit = await toggleHabitActiveStatus(
@@ -57,12 +58,12 @@ export default function HabitsConfigTable({
     }),
     columnHelper.accessor((row) => row, {
       id: 'deleteCol',
-      header: <span></span>,
+      header: <span className="">Delete</span>,
       cell: (info) => {
         const row = info.getValue()
         return (
           <button
-            className="w-16 rounded-lg bg-gray-200 p-1 text-sm shadow-sm hover:bg-gray-400"
+            className="w-16 text-black rounded-lg bg-gray-200 p-1 text-sm shadow-sm hover:bg-gray-400"
             onClick={async (e) => {
               const { id: habitId, name, active } = row
               await deleteHabit(habitId)
@@ -91,7 +92,7 @@ export default function HabitsConfigTable({
               {headerGroup.headers.map((column, index) => (
                 <th
                   key={column.id}
-                  className="w-1/2 md:w-auto py-2 px-4 text-left font-medium bg-violet-100"
+                  className="w-1/2 md:w-auto py-2 text-left font-medium px-2"
                 >
                   {flexRender(
                     column.column.columnDef.header,
@@ -102,13 +103,14 @@ export default function HabitsConfigTable({
             </tr>
           ))}
         </thead>
+
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="hover:bg-blue-200">
+            <tr key={row.id} className="hover:bg-gray-900">
               {row.getVisibleCells().map((cell, index) => (
                 <td
                   key={cell.id}
-                  className={classNames('w-1/2 md:w-auto py-2 px-4')}
+                  className={classNames('w-1/2 md:w-auto py-2 px-2')}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

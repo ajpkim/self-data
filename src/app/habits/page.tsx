@@ -49,7 +49,7 @@ export default function Habits() {
   }
   return (
     <>
-      <div className="text-right pr-5 text-sm italic">
+      <div className="text-right pr-5 text-md italic">
         <Link href="/habits/config">Settings</Link>
       </div>
       <div className="px-2">

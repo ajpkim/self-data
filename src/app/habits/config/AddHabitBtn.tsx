@@ -22,7 +22,7 @@ export default function AddHabitBtn({ setHabits }: AddHabitBtnProps) {
         type="text"
         value={habitName}
         onChange={handleInputChange}
-        className="px-4 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-800"
+        className="py-1 px-2 border-2 border-gray-900 rounded-md bg-gray-900 text-md focus:outline-none focus:border-gray-800"
         placeholder="Add habit"
       />
     </form>
