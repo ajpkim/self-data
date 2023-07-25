@@ -20,6 +20,7 @@ type HabitsTableProps = {
   startDate: string
   endDate: string
   setTriggerRefetch: (trigger: boolean) => void
+  setHabitsRecords: (habitsRecords: HabitRecords[]) => void
 }
 
 export default function HabitsTable({
@@ -27,6 +28,7 @@ export default function HabitsTable({
   startDate,
   endDate,
   setTriggerRefetch,
+  setHabitsRecords,
 }: HabitsTableProps) {
   let dates = getDatesFromEndpoints(startDate, endDate).reverse()
   const columnHelper = createColumnHelper<Habit>()
@@ -60,9 +62,36 @@ export default function HabitsTable({
             return (
               <button
                 onClick={async (e) => {
-                  const { habit_id, date, completed } = record
-                  await createOrDeleteHabitRecord(habit_id, date, !completed)
+                  const { habit_id: habitId, date, completed } = record
+                  const newOrDeletedRecord = await createOrDeleteHabitRecord(
+                    habitId,
+                    date,
+                    !completed,
+                  )
                   setTriggerRefetch((prev) => !prev)
+
+                  // TODO: Figure out how to update state locally and not have to refetch data...
+                  // For some reason this code works to update state only when toggling to NOT active
+
+                  // const newHabitsRecords = habitsRecords.map((x) => {
+                  //   if (x.habit.id !== habitId) {
+                  //     return { ...x }
+                  //   } else {
+                  //     let newRecords = x.records.filter(
+                  //       (record) => record.date !== date,
+                  //     )
+                  //     if (!completed) {
+                  //       // We created a new record in this case
+                  //       newRecords.push(newOrDeletedRecord)
+                  //     }
+                  //     return {
+                  //       habit: { ...x.habit },
+                  //       records: newRecords,
+                  //     }
+                  //   }
+                  // }
+                  // )
+                  // setHabitsRecords(newHabitsRecords)
                 }}
                 className={classNames(
                   'h-full w-full cursor-pointer flex items-center justify-center',

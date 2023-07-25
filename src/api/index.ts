@@ -90,17 +90,20 @@ export async function createOrDeleteHabitRecord(
     if (error) {
       throw new Error(error.message)
     }
+    return data
   } else {
     // Delete
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('habit_records')
       .delete()
       .eq('habit_id', habitId)
       .eq('date', date)
       .eq('completed', true)
+      .select()
     if (error) {
       throw new Error(error.message)
     }
+    return data
   }
 }
 

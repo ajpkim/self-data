@@ -40,10 +40,6 @@ export default function Habits() {
     init()
   }, [triggerRefetch])
 
-  const handleAddHabit = (newHabit) => {
-    setHabits((prevHabits) => [...prevHabits, newHabit])
-  }
-
   if (loading) {
     return <p>Loading</p>
   }
@@ -58,6 +54,7 @@ export default function Habits() {
           startDate={startDate}
           endDate={endDate}
           setTriggerRefetch={setTriggerRefetch}
+          setHabitsRecords={setHabitsRecords}
         />
       </div>
     </>
