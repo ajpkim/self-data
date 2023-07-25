@@ -1,6 +1,7 @@
 type Habit = {
   id: string
   name: string
+  active: boolean
 }
 
 type HabitRecord = {

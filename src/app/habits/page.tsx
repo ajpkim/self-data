@@ -1,9 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import HabitsTable from './HabitsTable'
-import AddHabitBtn from './AddHabitBtn'
-
 import { getActiveHabits, getHabitRecords } from '@/api'
 import { getFormattedDateString } from '@/utils'
 import type { Habit } from '@/types'
@@ -50,15 +49,14 @@ export default function Habits() {
   }
   return (
     <>
+      <div className="text-right pr-5 text-sm italic">
+        <Link href="/habits/config">Settings</Link>
+      </div>
       <div className="px-2">
         <HabitsTable
           habitsRecords={habitsRecords}
           startDate={startDate}
           endDate={endDate}
-          setTriggerRefetch={setTriggerRefetch}
-        />
-        <AddHabitBtn
-          onAddHabit={handleAddHabit}
           setTriggerRefetch={setTriggerRefetch}
         />
       </div>

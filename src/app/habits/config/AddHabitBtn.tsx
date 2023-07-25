@@ -2,14 +2,10 @@ import { useState } from 'react'
 import { createHabit } from '@/api'
 
 type AddHabitBtnProps = {
-  onAddHabit: (habitName: string) => void
-  setTriggerRefetch: (trigger: boolean) => void
+  setHabits: React.Dispatch<React.SetStateAction<Habit[]>>
 }
 
-export default function AddHabitBtn({
-  onAddHabit,
-  setTriggerRefetch,
-}: AddHabitBtnProps) {
+export default function AddHabitBtn({ setHabits }: AddHabitBtnProps) {
   const [habitName, setHabitName] = useState<string>('')
   const handleInputChange = (e) => {
     setHabitName(e.target.value)
@@ -17,8 +13,7 @@ export default function AddHabitBtn({
   const handleSubmit = async (e) => {
     e.preventDefault()
     const newHabit = await createHabit(habitName)
-    onAddHabit(newHabit)
-    setTriggerRefetch((prev) => !prev)
+    setHabits((prev) => [...prev, newHabit].sort((a, b) => b.active - a.active))
     setHabitName('')
   }
   return (

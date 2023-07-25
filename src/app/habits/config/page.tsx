@@ -1,0 +1,36 @@
+'use client'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { getX } from '@/api'
+import type { Habit } from '@/types'
+import HabitsConfigTable from './HabitsConfigTable'
+import AddHabitBtn from './AddHabitBtn'
+
+export default function HabitsConfig() {
+  const [habits, setHabits] = useState<Habit[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const initHabits = async () => {
+      let allHabits = await getX('habits')
+      allHabits.sort((a, b) => b.active - a.active)
+      setHabits(allHabits)
+      setLoading(false)
+    }
+    initHabits()
+  }, [])
+
+  if (loading) return <p>Loading</p>
+
+  return (
+    <>
+      <div className="text-right pr-5 text-sm italic">
+        <Link href="/habits">Habits</Link>
+      </div>
+      <div className="my-5">
+        <HabitsConfigTable habits={habits} setHabits={setHabits} />
+        <AddHabitBtn setHabits={setHabits} />
+      </div>
+    </>
+  )
+}

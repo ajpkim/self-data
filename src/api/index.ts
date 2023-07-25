@@ -61,15 +61,19 @@ export async function getHabitRecords(
   return Object.values(habitsMap)
 }
 
+export async function deleteHabit(habitId: string) {
+  const { error } = await supabase.from('habits').delete().eq('id', habitId)
+}
+
 export async function createHabit(name: string) {
   const { data, error } = await supabase
     .from('habits')
     .insert([{ name }])
-    .select()
+    .select('*')
   if (error) {
     throw new Error(error.message)
   }
-  return data
+  return data[0]
 }
 
 export async function createOrDeleteHabitRecord(
@@ -98,6 +102,17 @@ export async function createOrDeleteHabitRecord(
       throw new Error(error.message)
     }
   }
+}
+
+export async function toggleHabitActiveStatus(habitId, active) {
+  const { data, error } = await supabase
+    .from('habits')
+    .update({ active: active })
+    .eq('id', habitId)
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
 }
 
 // .lt('column', 'Less than')
