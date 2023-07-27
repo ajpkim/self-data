@@ -12,6 +12,7 @@ import {
   getDatesFromEndpoints,
   getAbbreviatedDayOfWeek,
   getTodayDate,
+  formatMinutes,
 } from '@/utils'
 import { getTimeRecords, createOrDeleteTimeRecord } from '@/api'
 import type { Project, TimeRecord, TimeRecords } from '@/types'
@@ -43,9 +44,13 @@ export default function ProjectsTimeTable({
       id: 'nameCol',
       header: () => <span></span>,
     }),
-    columnHelper.accessor('target', { header: () => <span>Target</span> }),
+    columnHelper.accessor('target', {
+      header: () => <span>Target</span>,
+      cell: (info) => formatMinutes(info.getValue()),
+    }),
     columnHelper.accessor('progress', {
       header: () => <span>Progress</span>,
+      cell: (info) => formatMinutes(info.getValue()),
     }),
     columnHelper.accessor((row) => row, {
       id: 'logCol',

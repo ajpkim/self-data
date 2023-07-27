@@ -7,6 +7,7 @@ import {
 
 import type { TimeRecord } from '@/types'
 import { deleteById } from '@/api'
+import { formatMinutes } from '@/utils'
 
 type TimeRecordTableProps = {
   records: TimeRecord[]
@@ -22,7 +23,10 @@ export default function TimeRecordsTable({ records, setRecords }) {
       // cell: (info) =>
     }),
     columnHelper.accessor('date'),
-    columnHelper.accessor('minutes'),
+    columnHelper.accessor('minutes', {
+      header: () => <span>Time</span>,
+      cell: (info) => formatMinutes(info.getValue()),
+    }),
     columnHelper.accessor((row) => row, {
       id: 'deleteCol',
       header: () => <span>Delete</span>,
@@ -30,6 +34,7 @@ export default function TimeRecordsTable({ records, setRecords }) {
         const { id: recordId } = info.getValue()
         return (
           <button
+            className="w-16 text-black rounded-lg bg-gray-200 p-1 text-sm shadow-sm hover:bg-gray-400"
             onClick={async (e) => {
               deleteById('time_records', recordId)
               setRecords((prev) => prev.filter((x) => x.id !== recordId))

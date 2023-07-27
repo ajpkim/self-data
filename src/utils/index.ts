@@ -79,3 +79,9 @@ export function getCurrentISOWeekNumber() {
   const weekNumber = Math.ceil(difference / (7 * 24 * 60 * 60 * 1000))
   return weekNumber
 }
+
+export function formatMinutes(minutes: number): string {
+  const hours = Math.floor(minutes / 60)
+  const remainder = (minutes % 60).toString().padStart(2, '0')
+  return `${hours}:${remainder}`
+}

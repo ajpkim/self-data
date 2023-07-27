@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { getActiveItems, getTimeRecords } from '@/api'
-import { getFormattedDateString, getCurrentWeekStartAndEndDates } from '@/utils'
+import {
+  getFormattedDateString,
+  getCurrentWeekStartAndEndDates,
+  formatMinutes,
+} from '@/utils'
 import type { Project, TimeRecord, TimeRecords } from '@/types'
 import ProjectsTimeTable from './ProjectsTimeTable'
 
@@ -13,12 +17,13 @@ export default function Time() {
   const [loading, setLoading] = useState<boolean>(true)
   const [startDate, setStartDate] = useState<string>('')
   const [endDate, setEndDate] = useState<string>('')
+  const [totalTarget, setTotalTarget] = useState<number>(0)
+  const [totalProgress, setTotalProgress] = useState<number>(0)
   const [triggerRefetch, setTriggerRefetch] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {
       // Initialize projects, startDate, endDate and default daterange to 10 days
-
       let [start, end] = getCurrentWeekStartAndEndDates()
       let endString = getFormattedDateString(end)
       let startString = getFormattedDateString(start)
@@ -31,6 +36,8 @@ export default function Time() {
         endString,
         activeProjects,
       )
+      setTotalTarget(records.reduce((acc, curr) => acc + curr.target, 0))
+      setTotalProgress(records.reduce((acc, curr) => acc + curr.progress, 0))
       setStartDate(startString)
       setEndDate(endString)
       setProjectsRecords(records)
@@ -49,6 +56,12 @@ export default function Time() {
       </div>
       <div className="text-right pr-5 text-md italic">
         <Link href="/time/records">Records</Link>
+      </div>
+      <div className="px-2">
+        <span className="border-2 p-1">
+          Target: {formatMinutes(totalTarget)} | Progress:{' '}
+          {formatMinutes(totalProgress)}
+        </span>
       </div>
 
       <div className="px-2 mt-5">

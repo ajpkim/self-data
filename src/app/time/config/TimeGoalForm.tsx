@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { upsertTimeGoal, getTimeGoal } from '@/api'
 import type { Project } from '@/types'
+import { formatMinutes } from '@/utils'
 
 type TimeGoalFormProps = {
   project: Project
@@ -53,8 +54,8 @@ export default function TimeGoalForm({
         type="text"
         value={minutes}
         onChange={handleInputChange}
-        className="py-1 px-2 border-2 border-gray-900 rounded-md bg-gray-700 text-md w-16 focus:border-gray-800 "
-        placeholder={goal}
+        className="py-1 px-2 border-2 border-gray-900 rounded-md bg-gray-700 text-md w-32 focus:border-gray-800 "
+        placeholder={`${goal} m (${formatMinutes(goal)})`}
       />
     </form>
   )
