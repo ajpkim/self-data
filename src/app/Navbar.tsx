@@ -9,6 +9,9 @@ export default function Navbar() {
       <Link className="mr-4" href="/habits">
         Habits
       </Link>
+      <Link className="mr-4" href="/time">
+        Time
+      </Link>
     </nav>
   )
 }

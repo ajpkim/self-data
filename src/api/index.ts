@@ -16,6 +16,21 @@ export async function getX(x: string) {
   return data === null ? [] : data
 }
 
+export async function deleteById(table: string, rowId: string) {
+  const { error } = await supabase.from(table).delete().eq('id', rowId)
+}
+
+export async function getActiveItems(table) {
+  let { data, error } = await supabase
+    .from(table)
+    .select('*')
+    .eq('active', true)
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
+}
+
 export async function getActiveHabits() {
   let { data, error } = await supabase
     .from('habits')
@@ -107,7 +122,10 @@ export async function createOrDeleteHabitRecord(
   }
 }
 
-export async function toggleHabitActiveStatus(habitId, active) {
+export async function toggleHabitActiveStatus(
+  habitId: string,
+  active: boolean,
+) {
   const { data, error } = await supabase
     .from('habits')
     .update({ active: active })
@@ -118,6 +136,163 @@ export async function toggleHabitActiveStatus(habitId, active) {
   return data
 }
 
+////////////////////////////////////////////////////////////////////////////////
+export async function createProject(name: string) {
+  const { data, error } = await supabase
+    .from('projects')
+    .insert([{ name }])
+    .select('*')
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data[0]
+}
+
+export async function toggleProjectActiveStatus(
+  projectId: string,
+  active: boolean,
+) {
+  const { data, error } = await supabase
+    .from('projects')
+    .update({ active: active })
+    .eq('id', projectId)
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data
+}
+
+export async function getTimeRecords(
+  startDate: string,
+  endDate: string,
+  projects: Project[],
+) {
+  let projectIds = projects.map((h) => h.id)
+  let { data: records, records_error } = await supabase
+    .from('time_records')
+    .select('*')
+    .in('project_id', projectIds)
+    .gte('date', startDate)
+    .lte('date', endDate)
+  if (records_error) {
+    throw new Error(records_error.message)
+  }
+  // Organize the records by project
+
+  let { data: goals, goals_error } = await supabase
+    .from('time_goals')
+    .select('*')
+    .in('project_id', projectIds)
+    .gte('start_date', startDate)
+    .lte('end_date', endDate)
+
+  if (goals_error) {
+    throw new Error(goals_error.message)
+  }
+
+  let projectsMap = projects.reduce(
+    (acc, curr) => ({
+      ...acc,
+      [curr.id]: {
+        project: curr,
+        target: 0,
+        progress: 0,
+        records: [],
+      },
+    }),
+    {},
+  )
+
+  for (const goal of goals) {
+    projectsMap[goal.project_id]['target'] = goal.minutes
+  }
+
+  // Switched to having only a single goal for each start/end pair
+  // const target = goals.reduce((acc, curr) => acc + curr.minutes, 0)
+
+  for (const record of records) {
+    projectsMap[record.project_id]['records'].push(record)
+    projectsMap[record.project_id]['progress'] += record.minutes
+  }
+
+  let data = Object.values(projectsMap)
+  data.sort((a, b) => a.project.name > b.project.name)
+  return data
+}
+
+export async function addTimeRecord(
+  projectId: string,
+  date: string,
+  minutes: number,
+) {
+  const { data, error } = await supabase
+    .from('time_records')
+    .insert([{ project_id: projectId, date: date, minutes }])
+    .select()
+}
+
+export async function upsertTimeGoal(
+  projectId: string,
+  startDate: string,
+  endDate: string,
+  minutes: number,
+) {
+  const { data: updated, update_error } = await supabase
+    .from('time_goals')
+    .update({
+      project_id: projectId,
+      start_date: startDate,
+      end_date: endDate,
+      minutes: minutes,
+    })
+    .eq('project_id', projectId)
+    .eq('start_date', startDate)
+    .eq('end_date', endDate)
+    .select()
+
+  if (update_error) {
+    throw new Error(update_error.message)
+  }
+
+  if (updated.length === 0) {
+    const { data: updated, create_error } = await supabase
+      .from('time_goals')
+      .insert([
+        {
+          project_id: projectId,
+          start_date: startDate,
+          end_date: endDate,
+          minutes: minutes,
+        },
+      ])
+    if (create_error) {
+      throw new Error(create_error.message)
+    }
+  }
+}
+
+/*
+ * Limited to specific start-end date time goals currently
+ */
+export async function getTimeGoal(
+  project: Project,
+  startDate: string,
+  endDate: string,
+) {
+  const { data, error } = await supabase
+    .from('time_goals')
+    .select('minutes')
+    .eq('project_id', project.id)
+    .eq('start_date', startDate)
+    .eq('end_date', endDate)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+  // const target = data.reduce((acc, curr) => acc + curr.minutes, 0)
+  let target = data.length > 0 ? data[0].minutes : 0
+  return target
+}
 // .lt('column', 'Less than')
 // .gte('column', 'Greater than or equal to')
 // .lte('column', 'Less than or equal to')

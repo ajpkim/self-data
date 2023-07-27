@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { getX } from '@/api'
 import type { Habit } from '@/types'
 import HabitsConfigTable from './HabitsConfigTable'
-import AddHabitBtn from './AddHabitBtn'
+import AddHabitForm from './AddHabitForm'
 
 export default function HabitsConfig() {
   const [habits, setHabits] = useState<Habit[]>([])
@@ -30,7 +30,7 @@ export default function HabitsConfig() {
         </div>
         <div className="my-5">
           <HabitsConfigTable habits={habits} setHabits={setHabits} />
-          <AddHabitBtn setHabits={setHabits} />
+          <AddHabitForm setHabits={setHabits} />
         </div>
       </div>
     </>

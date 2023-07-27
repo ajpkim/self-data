@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { createHabit } from '@/api'
 
-type AddHabitBtnProps = {
+type AddHabitFormProps = {
   setHabits: React.Dispatch<React.SetStateAction<Habit[]>>
 }
 
-export default function AddHabitBtn({ setHabits }: AddHabitBtnProps) {
+export default function AddHabitForm({ setHabits }: AddHabitBtnProps) {
   const [habitName, setHabitName] = useState<string>('')
   const handleInputChange = (e) => {
     setHabitName(e.target.value)
