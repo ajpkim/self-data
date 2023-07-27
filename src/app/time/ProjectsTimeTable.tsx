@@ -13,19 +13,19 @@ import {
   getAbbreviatedDayOfWeek,
   getTodayDate,
 } from '@/utils'
-import { getProjectRecords, createOrDeleteProjectRecord } from '@/api'
-import type { Project, ProjectRecord, ProjectRecords } from '@/types'
+import { getTimeRecords, createOrDeleteTimeRecord } from '@/api'
+import type { Project, TimeRecord, TimeRecords } from '@/types'
 import TimeRecordForm from './TimeRecordForm'
 
 // Does this belong in a client component???
 export const revalidate = 0
 
 type ProjectsTableProps = {
-  projectsRecords: ProjectRecords[]
+  projectsRecords: TimeRecords[]
   startDate: string
   endDate: string
   setTriggerRefetch: (trigger: boolean) => void
-  setProjectsRecords: (projectsRecords: ProjectRecords[]) => void
+  setProjectsRecords: (projectsRecords: TimeRecords[]) => void
 }
 
 export default function ProjectsTimeTable({
@@ -71,7 +71,7 @@ export default function ProjectsTimeTable({
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <div className="pt-10">
+    <div>
       <table className="table-auto w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

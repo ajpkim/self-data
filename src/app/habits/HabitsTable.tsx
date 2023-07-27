@@ -114,7 +114,7 @@ export default function HabitsTable({
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <div className="pt-10">
+    <div>
       <table className="table-auto w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

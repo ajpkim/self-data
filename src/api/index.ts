@@ -293,6 +293,36 @@ export async function getTimeGoal(
   let target = data.length > 0 ? data[0].minutes : 0
   return target
 }
+
+/*
+ * Return data for the Time Records page
+ */
+export async function getAllTimeRecords(): [
+  { project: Project; date: string; minutes: number },
+] {
+  const { data: records, records_error } = await supabase
+    .from('time_records')
+    .select('*')
+  if (records_error) {
+    throw new Error(records_error.message)
+  }
+
+  const projects = await getX('projects')
+  let projectsMap = {}
+  for (const project of projects) {
+    projectsMap[project.id] = project
+  }
+
+  const ret = []
+  for (const record of records) {
+    ret.push({
+      ...record,
+      project: projectsMap[record.project_id],
+    })
+  }
+  return ret
+}
+
 // .lt('column', 'Less than')
 // .gte('column', 'Greater than or equal to')
 // .lte('column', 'Less than or equal to')

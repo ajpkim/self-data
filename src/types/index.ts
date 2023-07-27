@@ -1,33 +1,33 @@
-type Habit = {
+export type Habit = {
   id: string
   name: string
   active: boolean
 }
 
-type HabitRecord = {
+export type HabitRecord = {
   habit: Habit
   date: string
   completed: boolean
 }
 
-type HabitRecords = {
+export type HabitRecords = {
   habit: Habit
   records: HabitRecord[]
 }
 
-type Project = {
+export type Project = {
   id: string
   name: string
   created_at: string
 }
 
-type ProjectRecord = {
+export type TimeRecord = {
   project: Project
   date: string
   minutes: number
 }
 
-type ProjectRecords = {
+export type TimeRecords = {
   project: Project
   records: ProjectRecord[]
 }

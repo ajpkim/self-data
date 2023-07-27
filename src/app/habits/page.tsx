@@ -48,7 +48,7 @@ export default function Habits() {
       <div className="text-right pr-5 text-md italic">
         <Link href="/habits/config">Settings</Link>
       </div>
-      <div className="px-2">
+      <div className="px-2 mt-5">
         <HabitsTable
           habitsRecords={habitsRecords}
           startDate={startDate}

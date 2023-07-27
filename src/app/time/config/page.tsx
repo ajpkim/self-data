@@ -37,7 +37,10 @@ export default function TimeConfig() {
       <div className="text-right pr-5 text-md italic">
         <Link href="/time">Time</Link>
       </div>
-      <div className="px-2">
+      <div className="text-right pr-5 text-md italic">
+        <Link href="/time/records">Records</Link>
+      </div>
+      <div className="px-2 mt-5">
         <ProjectConfigTable
           projects={projects}
           setProjects={setProjects}
