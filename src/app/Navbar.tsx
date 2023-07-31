@@ -12,6 +12,9 @@ export default function Navbar() {
       <Link className="mr-4" href="/time">
         Time
       </Link>
+      <Link className="mr-4" href="/projects">
+        Projects
+      </Link>
     </nav>
   )
 }

@@ -7,6 +7,8 @@ import {
   getFormattedDateString,
   getCurrentWeekStartAndEndDates,
   formatMinutes,
+  getCurrentISOWeekNumber,
+  formatISODateString,
 } from '@/utils'
 import type { Project, TimeRecord, TimeRecords } from '@/types'
 import ProjectsTimeTable from './ProjectsTimeTable'
@@ -44,7 +46,7 @@ export default function Time() {
       setLoading(false)
     }
     init()
-  }, [triggerRefetch])
+  }, [triggerRefetch, startDate, endDate])
 
   if (loading) {
     return <p>Loading</p>
@@ -57,13 +59,16 @@ export default function Time() {
       <div className="text-right pr-5 text-md italic">
         <Link href="/time/records">Records</Link>
       </div>
+
+      <p className="mb-2 text-center text-xl">
+        {formatISODateString(startDate)} - {formatISODateString(endDate)}
+      </p>
       <div className="px-2">
         <span className="border-2 p-1">
           Target: {formatMinutes(totalTarget)} | Progress:{' '}
           {formatMinutes(totalProgress)}
         </span>
       </div>
-
       <div className="px-2 mt-5">
         <ProjectsTimeTable
           projectsRecords={projectsRecords}

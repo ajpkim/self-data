@@ -43,6 +43,16 @@ export function formatDate(
   return date.toLocaleDateString(undefined, options)
 }
 
+export function formatISODateString(s: string): string {
+  const date = new Date(s)
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }
+  return new Intl.DateTimeFormat('en-US', options).format(date)
+}
+
 export function getCurrentWeekStartAndEndDates(
   format: boolean = false,
 ): [Date, Date] | [string, string] {
