@@ -46,7 +46,7 @@ export default function Time() {
       setLoading(false)
     }
     init()
-  }, [triggerRefetch, startDate, endDate])
+  }, [triggerRefetch])
 
   if (loading) {
     return <p>Loading</p>

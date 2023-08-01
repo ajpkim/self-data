@@ -57,16 +57,20 @@ export function getCurrentWeekStartAndEndDates(
   format: boolean = false,
 ): [Date, Date] | [string, string] {
   const now = new Date()
-  const currentDay = now.getDay()
-  const diff = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
-  const start = new Date(now.setDate(diff))
-  const end = new Date(now.setDate(diff + 6))
+  const start = new Date(now)
+  const end = new Date(now)
 
-  if (format) {
-    return [formatDate(start), formatDate(end)]
-  } else {
-    return [start, end]
-  }
+  const currentDay = now.getDay()
+  const diffToStart = currentDay === 0 ? 6 : currentDay - 1
+  const diffToEnd = currentDay === 0 ? 0 : 7 - currentDay
+
+  start.setDate(now.getDate() - diffToStart)
+  start.setHours(0, 0, 0, 0)
+
+  end.setDate(now.getDate() + diffToEnd)
+  end.setHours(23, 59, 59, 999)
+
+  return format ? [formatDate(start), formatDate(end)] : [start, end]
 }
 
 export function getTodayDateFormatted(
